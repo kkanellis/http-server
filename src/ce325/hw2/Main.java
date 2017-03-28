@@ -4,6 +4,7 @@ import ce325.hw2.html.Document;
 import ce325.hw2.html.P;
 import ce325.hw2.html.Text;
 import ce325.hw2.html.Title;
+import ce325.hw2.service.StatisticsService;
 
 public class Main {
 
@@ -13,5 +14,18 @@ public class Main {
 
         DOM.getHead().addChild(new Title("TEST!"));
         System.out.println(DOM.getHTML());
+
+        StatisticsService s = StatisticsService.getInstance();
+
+        s.start();
+
+        int slot = s.onConnect(-1);
+        int slot2 = s.onConnect(-2);
+        s.onDisconnect(slot, 400);
+        s.onDisconnect(slot2, 200);
+        int slot3 = s.onConnect(-3);
+        s.onDisconnect(slot3, 200);
+        System.out.println(s.getMeanTime());
+
     }
 }

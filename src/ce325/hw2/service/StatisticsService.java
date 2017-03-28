@@ -18,7 +18,7 @@ public class StatisticsService {
         return ourInstance;
     }
 
-    private final static int MAX_MEAN_SLOTS = 10;
+    private final static int MAX_MEAN_SLOTS = 3;
 
     private long mStarted;
     private AtomicLong mConnections;
@@ -50,11 +50,11 @@ public class StatisticsService {
         }
         // increment and get total connections
         long connections = mConnections.incrementAndGet();
-        int sum = 0;
-        int nonZero = 0;
 
         // Calculate the sum, and try to zero out the slots
         if ((connections % MAX_MEAN_SLOTS) == 0) {
+            int sum = 0;
+            int nonZero = 0;
             for (int i = 0; i < mTimeArray.length(); i++) {
                 int time = mTimeArray.get(i);
                 if (time > 0) {
@@ -64,10 +64,12 @@ public class StatisticsService {
                     nonZero++;
                 }
             }
+            // calculate the mean time
+            if (nonZero > 0) {
+                mMeanTime.set(sum / nonZero);
+            }
         }
 
-        // calculate the mean time
-        mMeanTime.set(sum/nonZero);
 
         // try to get a slot for mean request time calculation
         for (int i=0; i < mTimeArray.length(); i++) {
