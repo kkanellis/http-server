@@ -7,4 +7,9 @@ public class P extends Tag{
     public P() {
         mTagName = "p";
     }
+
+    public P(String text) {
+        mTagName = "p";
+        mChildren.add(new Text(text));
+    }
 }
