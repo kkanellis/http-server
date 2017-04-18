@@ -4,6 +4,7 @@ import ce325.hw2.html.Document;
 import ce325.hw2.html.P;
 import ce325.hw2.html.Text;
 import ce325.hw2.html.Title;
+import ce325.hw2.http.servers.MainServer;
 import ce325.hw2.service.StatisticsService;
 
 public class Main {
@@ -26,6 +27,9 @@ public class Main {
         int slot3 = s.onConnect(-3);
         s.onDisconnect(slot3, 200);
         System.out.println(s.getMeanTime());
+
+        MainServer mainServer = new MainServer("/home/", 8000);
+        mainServer.start();
 
     }
 }
