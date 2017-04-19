@@ -28,7 +28,7 @@ public class Logger {
     }
 
     public void warn(String s) {
-        this.print("WARNING", s);
+        this.print("WARN", s);
     }
 
     public void error(String s) {
@@ -43,7 +43,7 @@ public class Logger {
     private void print(String type, String msg) {
         double elapsed = ((double)created.until(LocalDateTime.now(), ChronoUnit.MILLIS)) / 1000.0;
         System.out.println(
-            String.format("[%7.3f][%s] %s", elapsed, type, msg)
+            String.format("[%7.3f][%5s] %s", elapsed, type, msg)
         );
     }
 }
