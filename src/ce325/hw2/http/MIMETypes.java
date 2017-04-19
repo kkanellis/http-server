@@ -17,7 +17,9 @@ public class MIMETypes {
         return ourInstance;
     }
 
-    private static final String UNKNOWN_FILE_MIME_TYPE = "application/octet-stream";
+    private static Logger logger = Logger.getInstance();
+
+    public static final String UNKNOWN_FILE_MIME_TYPE = "application/octet-stream";
     private static Map<String, String> mimeTypes;
 
     private MIMETypes() {
@@ -35,7 +37,6 @@ public class MIMETypes {
      * @param filepath path to the file containing the MIMETypes
      */
     public static void populateFromFile(String filepath) {
-        Logger logger = Logger.getInstance();
         BufferedReader reader = null;
         String line;
 
@@ -75,7 +76,7 @@ public class MIMETypes {
      * @param fileExt the file extension (without the dot '.')
      * @return the correct MIME type if exists; UNKNOWN_FILE_MIME_TYPE otherwise
      */
-    public String getMIMEType(String fileExt) {
+    public static String getMIMEType(String fileExt) {
         String mimeType = mimeTypes.get(fileExt);
         return (mimeType != null) ? mimeType : UNKNOWN_FILE_MIME_TYPE;
     }
