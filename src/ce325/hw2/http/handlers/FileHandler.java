@@ -51,7 +51,7 @@ public class FileHandler implements HttpHandler {
             String.format("Request for '%s'", filepath.toString())
         );
 
-        // //
+        // decide how to handle the request
         try {
             if (Files.isDirectory(filepath)) {
                 //serveDir(exchange, filepath);
@@ -77,8 +77,8 @@ public class FileHandler implements HttpHandler {
 
     /**
      * Serves a file to the client
-     * @param exchange
-     * @param filepath
+     * @param exchange Request HttpExchange object
+     * @param filepath Path object pointing to the file
      * @throws IOException
      */
     private void serveFile(HttpExchange exchange, Path filepath) throws IOException {
@@ -109,10 +109,11 @@ public class FileHandler implements HttpHandler {
 
     /**
      * Sends an HTTP response to the client
-     * @param exchange
-     * @param responseCode
-     * @param responseStream
-     * @param responseLength
+     *
+     * @param exchange Request HttpExchange object
+     * @param responseCode HTTP Status code
+     * @param responseStream An InputStream from where the response will be read
+     * @param responseLength Length (in bytes) of the response
      */
     private void sendResponse(HttpExchange exchange, int responseCode,
                               InputStream responseStream, long responseLength) {
@@ -146,7 +147,7 @@ public class FileHandler implements HttpHandler {
             try {
                 os.close();
             }
-            catch (IOException ex) {
+            catch (IOException | NullPointerException ex) {
                 logger.warn("sendResponse: " + ex.getMessage());
             }
         }
@@ -154,11 +155,12 @@ public class FileHandler implements HttpHandler {
 
     private void sendStringResponse(HttpExchange exchange, int responseCode, String response)
             throws UnsupportedEncodingException {
+        byte[] bytes = response.getBytes("UTF-8");
         sendResponse(
             exchange,
             responseCode,
-            new ByteArrayInputStream(response.getBytes("UTF-8")),
-            response.length()
+            new ByteArrayInputStream(bytes),
+            bytes.length
         );
     }
 }
