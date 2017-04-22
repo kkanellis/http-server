@@ -57,8 +57,9 @@ public class MIMETypes {
             }
         }
         catch (IOException ex) {
-            logger.error("MIMETypes: error while populating map");
+            logger.error("MIMETypes: error while reading/populating");
             logger.error(ex.getMessage());
+            System.exit(-1);
         }
         finally {
             try {

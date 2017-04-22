@@ -38,7 +38,7 @@ public class MainServer {
         catch(IllegalArgumentException | NullPointerException ex) {
             logger.error(String.format("Invalid root directory [%s]", rootDir));
             logger.error(ex.getMessage());
-            // TODO: exit
+            System.exit(-1);
         }
         // TODO: change that to add Queue support
         server.setExecutor(null);
