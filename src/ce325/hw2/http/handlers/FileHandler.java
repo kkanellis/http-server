@@ -13,6 +13,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class FileHandler implements HttpHandler {
         // decide how to handle the request
         try {
             if (Files.isDirectory(filepath)) {
-                //serveDir(exchange, filepath);
+                serveDir(exchange, filepath);
             } else if (Files.isRegularFile(filepath)) {
                 serveFile(exchange, filepath);
             } else {
@@ -105,7 +106,140 @@ public class FileHandler implements HttpHandler {
         );
     }
 
+    /**
+     * Serves this directory to the client
+     *
+     * If an 'index.html' file exists in the directory returns its contents
+     * Otherwise, returns a String which contains an HTML page which
+     * presents the contents of this directory
+     * @param exchange request object
+     * @param dir Path obj of the directory
+     */
+    private void serveDir(HttpExchange exchange, Path dir) throws IOException {
+        // add trailing slash (needed for correct links etc)
+        URI requestURI = exchange.getRequestURI();
+        requestURI = !requestURI.toString().endsWith("/") ?
+                        requestURI.resolve(requestURI.toString() + "/") :
+                        requestURI;
+        logger.debug(String.format(
+                "serveDir: '%s' -> '%s'",
+                requestURI.toString(),
+                dir.toString()
+        ));
 
+        // return 'index.html' if exists
+        Path indexFile = Paths.get(dir.toString(), "index.html");
+        if (Files.isRegularFile(indexFile) ) {
+            serveFile(exchange, indexFile);
+        }
+
+        Document response = new Document();
+        response.getBody().addChild(new H(1).addChild(
+            new Text(String.format("Index of %s", dir.getFileName()))
+        ));
+
+        // fetch and sort files/dirs inside directory
+        List<Path> files = Files.list(dir)
+            .sorted(new DirectoriesFirstComparator())
+            .collect(Collectors.toCollection(ArrayList::new));
+
+        // add table header
+        Table table = new Table();
+        Tr header = new Tr();
+        header.addChild(new Th().addChild(new Text("Name")));
+        header.addChild(new Th().addChild(new Text("Last Modified")));
+        header.addChild(new Th().addChild(new Text("Size")));
+        table.addChild(header);
+
+        // horizontal rule
+        table.addChild(new Td().addAttribute("colspan", "5")
+            .addChild(new Hr())
+        );
+
+        // add parent directory as entry
+        if ( !requestURI.getPath().equals("/") ) {
+            URI parentDir = requestURI.getPath().endsWith("/") ?
+                                requestURI.resolve("..") :
+                                requestURI.resolve(".");
+            table.addChild(
+               getFileEntryHTML(dir, "..", parentDir)
+            );
+        }
+
+        // populate table
+        for(Path p : files) {
+            String filename = p.getFileName().toString();
+            URI href = requestURI.resolve( URLEncoder.encode(filename, "UTF-8") );
+            table.addChild(
+                getFileEntryHTML(p, filename, href)
+            );
+        }
+        response.getBody().addChild(table);
+
+        // horizontal rule
+        table.addChild(new Td().addAttribute("colspan", "5")
+            .addChild(new Hr())
+        );
+
+        // TODO: add <address>
+
+        // add 'Content-Type' header
+        exchange.getResponseHeaders().add("Content-Type", "text/html");
+
+        sendStringResponse(
+            exchange,
+            HttpStatusCodes.HTTP_OK,
+            response.getHTML()
+        );
+    }
+
+    /**
+     * Returns a Tr obj (HTML row) containing the file info
+     *
+     * @param file Path object of the file
+     * @param displayName Name that will be displayed in the HTML
+     * @param href Link to the file
+     * @return Tr object
+     * @throws IOException
+     */
+    private Tr getFileEntryHTML(Path file, String displayName, URI href)
+            throws IOException {
+        Tr r = new Tr();
+
+        // icon
+        // TODO: icon
+
+        // link to file/dir
+        A a = new A();
+        a.addAttribute("href", href.toString());
+        a.addChild(new Text(displayName));
+        r.addChild(new Td().addChild(a));
+
+        // file last modified
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy hh:mm");
+        r.addChild(new Td().addChild(new Text(
+            df.format(Files.getLastModifiedTime(file).toMillis())
+        )));
+
+        // human readable file size (file only)
+        String fileSize = "";
+        if (Files.isRegularFile(file)) {
+            long bytes = Files.size(file);
+            if (bytes < 1024) {
+                fileSize = bytes + " B";
+            }
+            else {
+                int exp = (int) (Math.log(bytes) / Math.log(1024));
+                String pre = Character.toString("KMGTPE".charAt(exp - 1));
+                fileSize = String.format("%.2f %sB", bytes / Math.pow(1024, exp), pre);
+            }
+        }
+        r.addChild(new Td().addChild(new Text(fileSize))
+                .addAttribute("align", "right")
+        );
+
+        return r;
+    }
 
     /**
      * Sends an HTTP response to the client
