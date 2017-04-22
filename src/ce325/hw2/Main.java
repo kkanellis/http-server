@@ -6,7 +6,13 @@ import ce325.hw2.html.Text;
 import ce325.hw2.html.Title;
 import ce325.hw2.http.MIMETypes;
 import ce325.hw2.http.servers.MainServer;
+import ce325.hw2.io.Config;
 import ce325.hw2.service.StatisticsService;
+import ce325.hw2.util.Logger;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
 
 public class Main {
 
@@ -29,10 +35,31 @@ public class Main {
         s.onDisconnect(slot3, 200);
         System.out.println(s.getMeanTime());
 
-        MIMETypes.populateFromFile("mime-types.txt");
+        // Parse the XML configuration file
+        Logger logger = Logger.getInstance();
+        Config config;
+        try {
+            JAXBContext jc = JAXBContext.newInstance(Config.class);
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            config = (Config)unmarshaller.unmarshal(new File("config.xml"));
+        }
+        catch (Exception ex) {
+            logger.error("Error while reading configuration file!");
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+            return;
+        }
 
-        MainServer mainServer = new MainServer("/home/", 8000);
+        // Read MIME types
+        MIMETypes.populateFromFile(
+                config.getMIMETypesPath().toString()
+        );
+
+
+        MainServer mainServer = new MainServer(
+            config.getDocumentRootPath().toString(),
+            config.getMainServerPort()
+        );
         mainServer.start();
-
     }
 }
