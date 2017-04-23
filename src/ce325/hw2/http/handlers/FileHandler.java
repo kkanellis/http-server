@@ -2,6 +2,7 @@ package ce325.hw2.http.handlers;
 
 import ce325.hw2.html.*;
 import ce325.hw2.http.HttpStatusCodes;
+import ce325.hw2.http.Icons;
 import ce325.hw2.http.MIMETypes;
 import ce325.hw2.io.Config;
 import ce325.hw2.util.DirectoriesFirstComparator;
@@ -86,11 +87,9 @@ public class FileHandler implements HttpHandler {
         logger.debug(String.format("serveFile: serving file '%s'", filepath.toString()));
 
         // find MIME type for file
-        String filename = filepath.getFileName().toString();
-        int fileExtPos = filename.lastIndexOf('.');
-
-        String mimeType = (fileExtPos > 0) ?
-                MIMETypes.getMIMEType( filename.substring(fileExtPos + 1) ) :
+        String fileExt = getFileExtension(filepath);
+        String mimeType = (fileExt.length() > 0) ?
+                MIMETypes.getMIMEType(fileExt) :
                 MIMETypes.UNKNOWN_FILE_MIME_TYPE;
 
         // add 'Content-Type' header
@@ -146,6 +145,7 @@ public class FileHandler implements HttpHandler {
         // add table header
         Table table = new Table();
         Tr header = new Tr();
+        header.addChild(new Th());
         header.addChild(new Th().addChild(new Text("Name")));
         header.addChild(new Th().addChild(new Text("Last Modified")));
         header.addChild(new Th().addChild(new Text("Size")));
@@ -207,7 +207,13 @@ public class FileHandler implements HttpHandler {
         Tr r = new Tr();
 
         // icon
-        // TODO: icon
+        Img icon = new Img();
+        icon.addAttribute("src",
+                Files.isDirectory(file) ?
+                    Icons.getDirIcon() :
+                    Icons.getFileIcon(getFileExtension(file))
+        );
+        r.addChild(new Td().addChild(icon));
 
         // link to file/dir
         A a = new A();
@@ -296,5 +302,17 @@ public class FileHandler implements HttpHandler {
             new ByteArrayInputStream(bytes),
             bytes.length
         );
+    }
+
+    /**
+     * Returns the file extension as a String (without the dot)
+     * @param file
+     * @return The file extension if there is one; empty string otherwise.
+     */
+    private String getFileExtension(Path file) {
+        String filename = file.getFileName().toString();
+        int fileExtPos = filename.lastIndexOf('.');
+
+        return (fileExtPos > 0) ? filename.substring(fileExtPos + 1) : "";
     }
 }

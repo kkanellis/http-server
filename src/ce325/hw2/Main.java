@@ -4,6 +4,7 @@ import ce325.hw2.html.Document;
 import ce325.hw2.html.P;
 import ce325.hw2.html.Text;
 import ce325.hw2.html.Title;
+import ce325.hw2.http.Icons;
 import ce325.hw2.http.MIMETypes;
 import ce325.hw2.http.servers.MainServer;
 import ce325.hw2.io.Config;
@@ -13,6 +14,8 @@ import ce325.hw2.util.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Main {
 
@@ -55,7 +58,16 @@ public class Main {
                 config.getMIMETypesPath().toString()
         );
 
+        // Set icons path
+        Path iconsDir = config.getIconsDirPath();
+        Path absoluteIconsDir = config.getDocumentRootPath().resolve(iconsDir);
+        if (!Files.isDirectory(absoluteIconsDir)) {
+            logger.warn(String.format("Provided icons dir '%s' is not a directory!", absoluteIconsDir));
+            logger.warn("Icons may not show up correctly...");
+        }
+        Icons.setDir(iconsDir);
 
+        // Initialize server
         MainServer mainServer = new MainServer(
             config.getDocumentRootPath().toString(),
             config.getMainServerPort()
