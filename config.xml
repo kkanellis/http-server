@@ -8,5 +8,6 @@
   </log>
   <documentroot filepath="/home/" />
   <mimetypes filepath="mime-types.txt" />
+  <iconsdir filepath="icons/" />
 </ce325server>
 

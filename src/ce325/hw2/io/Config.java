@@ -44,6 +44,14 @@ public class Config {
                 .normalize().toAbsolutePath();
     }
 
+    @XmlElement(name="iconsdir")
+    private FileInfo iconsDir;
+    public Path getIconsDirPath() {
+        return Paths.get(
+            iconsDir.filepath
+        ).normalize();
+    }
+
     private static class LoggersInfo {
         @XmlElement(name="access")
         private FileInfo accessLogFilepath;
