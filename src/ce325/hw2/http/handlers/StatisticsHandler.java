@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.util.Date;
 
 /**
- * Created by georgetg on 25/3/2017.
+ * Handles the HTTP server statistics requests
  */
 public class StatisticsHandler implements HttpHandler{
     @Override

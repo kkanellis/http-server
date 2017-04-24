@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by georgetg on 4/24/2017.
+ * Access/Error files logging service
  */
 public class WebLoggingService {
     private static WebLoggingService ourInstance = new WebLoggingService();

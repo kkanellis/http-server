@@ -1,7 +1,7 @@
 package ce325.hw2.http;
 
 /**
- * Created by sfi on 20/4/2017.
+ * HTTP Status codes
  */
 public class HttpStatusCodes {
     public static final int HTTP_OK = 200;
