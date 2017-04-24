@@ -9,4 +9,21 @@ public class HttpStatusCodes {
     public static final int HTTP_NOT_FOUND = 404;
     public static final int HTTP_METHOD_NOT_ALLOWED = 405;
     public static final int HTTP_SERVER_ERROR = 500;
+
+    public static String describe(int code) {
+        switch (code) {
+            case 200:
+                return "OK";
+            case 400:
+                return "Bad Request";
+            case 404:
+                return "Not Found";
+            case 405:
+                return "Method Not Allowed";
+            case 500:
+                return "Internal Server Error";
+            default:
+                return "";
+        }
+    }
 }

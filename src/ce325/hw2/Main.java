@@ -7,8 +7,10 @@ import ce325.hw2.html.Title;
 import ce325.hw2.http.Icons;
 import ce325.hw2.http.MIMETypes;
 import ce325.hw2.http.servers.MainServer;
+import ce325.hw2.http.servers.StatisticsServer;
 import ce325.hw2.io.Config;
 import ce325.hw2.service.StatisticsService;
+import ce325.hw2.service.WebLoggingService;
 import ce325.hw2.util.Logger;
 
 import javax.xml.bind.JAXBContext;
@@ -27,16 +29,7 @@ public class Main {
         System.out.println(DOM.getHTML());
 
         StatisticsService s = StatisticsService.getInstance();
-
         s.start();
-
-        int slot = s.onConnect(-1);
-        int slot2 = s.onConnect(-2);
-        s.onDisconnect(slot, 400);
-        s.onDisconnect(slot2, 200);
-        int slot3 = s.onConnect(-3);
-        s.onDisconnect(slot3, 200);
-        System.out.println(s.getMeanTime());
 
         // Parse the XML configuration file
         Logger logger = Logger.getInstance();
@@ -67,11 +60,22 @@ public class Main {
         }
         Icons.setDir(iconsDir);
 
-        // Initialize server
+        // Initialize web logging
+        WebLoggingService wls = WebLoggingService.getInstance();
+        wls.setAccessLogPath(config.getAccessFilepath());
+        wls.setErrorLogPath(config.getErrorFilepath());
+
+        // Initialize servers
         MainServer mainServer = new MainServer(
             config.getDocumentRootPath().toString(),
             config.getMainServerPort()
         );
         mainServer.start();
+
+        StatisticsServer statisticsServer = new StatisticsServer(
+                config.getStatisticsServerPort()
+        );
+        statisticsServer.start();
+
     }
 }

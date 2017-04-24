@@ -5,6 +5,7 @@ import ce325.hw2.util.Logger;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
@@ -32,10 +33,7 @@ public class MainServer {
 
         try {
             // set handler for all requests
-            server.createContext(
-                    "/",
-                    new FileHandler(rootDir)
-            );
+            server.createContext("/", new FileHandler(rootDir));
         } catch(IllegalArgumentException | NullPointerException ex) {
             logger.error(String.format("Invalid root directory [%s]", rootDir));
             logger.error(ex.getMessage());
@@ -51,7 +49,8 @@ public class MainServer {
     public void start() {
         logger.debug("Starting server...");
         server.start();
-        logger.info("Server started!");
+        InetSocketAddress address = server.getAddress();
+        logger.info(String.format("File server listening on %s:[%d]", address.getHostName(), address.getPort()));
     }
 
     public void stop() {

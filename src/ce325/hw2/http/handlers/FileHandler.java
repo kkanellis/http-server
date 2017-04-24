@@ -4,7 +4,9 @@ import ce325.hw2.html.*;
 import ce325.hw2.http.HttpStatusCodes;
 import ce325.hw2.http.Icons;
 import ce325.hw2.http.MIMETypes;
+import ce325.hw2.http.servers.StatisticsServer;
 import ce325.hw2.io.Config;
+import ce325.hw2.service.StatisticsService;
 import ce325.hw2.util.DirectoriesFirstComparator;
 import ce325.hw2.util.Logger;
 import com.sun.net.httpserver.Headers;
@@ -34,6 +36,11 @@ public class FileHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws UnsupportedEncodingException {
+        // timing
+        StatisticsService stats = StatisticsService.getInstance();
+        int slot = stats.onConnect(-(int)Thread.currentThread().getId());
+        long connectedAt = stats.getTimeDelta();
+
         // Check if request method is not GET
         if ( !exchange.getRequestMethod().equalsIgnoreCase("GET") ) {
             sendStringResponse(
@@ -41,6 +48,9 @@ public class FileHandler implements HttpHandler {
                 HttpStatusCodes.HTTP_METHOD_NOT_ALLOWED,
                 "Server supports only GET requests"
             );
+            stats.onError();
+            stats.onDisconnect(slot, (int)(stats.getTimeDelta() - connectedAt));
+            return;
         }
 
         // find requested absolute path
@@ -49,9 +59,7 @@ public class FileHandler implements HttpHandler {
             URLDecoder.decode(exchange.getRequestURI().toString(), "UTF-8")
         ).toAbsolutePath();
 
-        logger.debug(
-            String.format("Request for '%s'", filepath.toString())
-        );
+        logger.debug(String.format("Request for '%s'", filepath.toString()));
 
         // decide how to handle the request
         try {
@@ -65,16 +73,20 @@ public class FileHandler implements HttpHandler {
                     HttpStatusCodes.HTTP_NOT_FOUND,
                     "Requested resource does not exist (or is symbolic link)"
                 );
+                stats.onError();
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             logger.warn("handle: " + ex.getMessage());
             sendStringResponse(
                 exchange,
                 HttpStatusCodes.HTTP_SERVER_ERROR,
                 "Internal server error"
             );
+            stats.onError();
+        } finally {
+            stats.onDisconnect(slot, (int)(stats.getTimeDelta() - connectedAt));
         }
+
     }
 
     /**

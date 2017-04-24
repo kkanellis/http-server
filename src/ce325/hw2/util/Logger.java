@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * Simple logging class
  * TODO: maybe add colors (if is portable across os)
+ *  -> Not portable
  */
 public class Logger {
     private static Logger ourInstance = new Logger();
