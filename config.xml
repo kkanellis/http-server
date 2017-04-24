@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ce325server>
-  <listen port="8000" />
-  <statistics port="8001" />
+  <listen port="8081" />
+  <statistics port="8082" />
   <log>
     <access filepath="access_log.txt" />
     <error filepath="error_log.txt" />
   </log>
-  <documentroot filepath="/home/" />
+  <documentroot filepath="/test/" />
   <mimetypes filepath="mime-types.txt" />
   <iconsdir filepath="icons/" />
 </ce325server>

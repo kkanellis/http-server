@@ -28,6 +28,7 @@ public class FileHandler implements HttpHandler {
     private final int STREAM_BUFFER_SIZE = 1024;
 
     private Logger logger = Logger.getInstance();
+    private StatisticsService stats = StatisticsService.getInstance();
     private String rootDir;
 
     public FileHandler(String rootDir) {
@@ -36,8 +37,7 @@ public class FileHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws UnsupportedEncodingException {
-        // timing
-        StatisticsService stats = StatisticsService.getInstance();
+        // Get a slot and request start time
         int slot = stats.onConnect(-(int)Thread.currentThread().getId());
         long connectedAt = stats.getTimeDelta();
 

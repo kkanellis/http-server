@@ -9,6 +9,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 
 /**
  * Created by georgetg on 25/3/2017.
@@ -25,8 +26,12 @@ public class StatisticsHandler implements HttpHandler{
         DOM.getBody().addChild(new H(3).addChild(new Text("Server statistics:")));
         DOM.getBody().addChild(new Hr());
         DOM.getBody().addChild(new P("Total connections: " + stats.getConnections()));
-        DOM.getBody().addChild(new P("Request mean time: " + stats.getMeanTime()));
         DOM.getBody().addChild(new P("Total errors: " + stats.getTotalErrors()));
+        DOM.getBody().addChild(new P("Request mean time: " + stats.getMeanTime()));
+        DOM.getBody().addChild(new Hr());
+        Date date = new Date(stats.getStartedTime());
+        DOM.getBody().addChild(new P(String.format("Server up since: %s (%.2f seconds)",
+                date.toString(), stats.getTimeDelta()/1000f)));
 
         // write the response
         String response = DOM.getHTML();
