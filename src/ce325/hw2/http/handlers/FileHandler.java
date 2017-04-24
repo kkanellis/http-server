@@ -145,7 +145,7 @@ public class FileHandler implements HttpHandler {
         ));
 
         // return 'index.html' if exists
-        Path indexFile = Paths.get(dir.toString(), "index.html");
+        Path indexFile = Paths.get(dir.toString(), "index.htm");
         if (Files.isRegularFile(indexFile) ) {
             serveFile(exchange, indexFile);
         }
