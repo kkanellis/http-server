@@ -192,18 +192,24 @@ public class FileHandler implements HttpHandler {
                 getFileEntryHTML(p, filename, href)
             );
         }
-        response.getBody().addChild(table);
 
         // horizontal rule
         table.addChild(new Td().addAttribute("colspan", "5")
             .addChild(new Hr())
         );
+        response.getBody().addChild(table);
 
-        // TODO: add <address>
+        // address tag
+        InetSocketAddress lAddress = exchange.getLocalAddress();
+        response.getBody().addChild(new Address().addChild(
+            new Text(String.format(
+               "%s @ %s:%d",
+                Config.SERVER_NAME, lAddress.getHostName(), lAddress.getPort()
+            ))
+        ));
 
-        // add 'Content-Type' header
+        // add 'Content-Type' header & send response
         exchange.getResponseHeaders().add("Content-Type", "text/html");
-
         sendStringResponse(
             exchange,
             HttpStatusCodes.HTTP_OK,
