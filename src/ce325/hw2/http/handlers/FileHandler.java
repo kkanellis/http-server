@@ -4,9 +4,9 @@ import ce325.hw2.html.*;
 import ce325.hw2.http.HttpStatusCodes;
 import ce325.hw2.http.Icons;
 import ce325.hw2.http.MIMETypes;
-import ce325.hw2.http.servers.StatisticsServer;
 import ce325.hw2.io.Config;
 import ce325.hw2.service.StatisticsService;
+import ce325.hw2.service.WebLoggingService;
 import ce325.hw2.util.DirectoriesFirstComparator;
 import ce325.hw2.util.Logger;
 import com.sun.net.httpserver.Headers;
@@ -28,6 +28,7 @@ public class FileHandler implements HttpHandler {
     private final int STREAM_BUFFER_SIZE = 1024;
 
     private Logger logger = Logger.getInstance();
+    private WebLoggingService webLogger = WebLoggingService.getInstance();
     private StatisticsService stats = StatisticsService.getInstance();
     private String rootDir;
 
@@ -48,7 +49,6 @@ public class FileHandler implements HttpHandler {
                 HttpStatusCodes.HTTP_METHOD_NOT_ALLOWED,
                 "Server supports only GET requests"
             );
-            stats.onError();
             stats.onDisconnect(slot, (int)(stats.getTimeDelta() - connectedAt));
             return;
         }
@@ -73,7 +73,6 @@ public class FileHandler implements HttpHandler {
                     HttpStatusCodes.HTTP_NOT_FOUND,
                     "Requested resource does not exist (or is symbolic link)"
                 );
-                stats.onError();
             }
         } catch (Exception ex) {
             logger.warn("handle: " + ex.getMessage());
@@ -82,6 +81,12 @@ public class FileHandler implements HttpHandler {
                 HttpStatusCodes.HTTP_SERVER_ERROR,
                 "Internal server error"
             );
+
+            // Need to convert to string
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            webLogger.error(exchange, sw.toString());
             stats.onError();
         } finally {
             stats.onDisconnect(slot, (int)(stats.getTimeDelta() - connectedAt));
@@ -115,6 +120,7 @@ public class FileHandler implements HttpHandler {
             new FileInputStream(file),
             file.length()
         );
+        webLogger.access(exchange, HttpStatusCodes.HTTP_OK);
     }
 
     /**
@@ -203,6 +209,7 @@ public class FileHandler implements HttpHandler {
             HttpStatusCodes.HTTP_OK,
             response.getHTML()
         );
+        webLogger.access(exchange, HttpStatusCodes.HTTP_OK);
     }
 
     /**
@@ -314,6 +321,12 @@ public class FileHandler implements HttpHandler {
             new ByteArrayInputStream(bytes),
             bytes.length
         );
+
+        // Log access and add error if needed
+        webLogger.access(exchange, responseCode);
+        if (responseCode >= 400) {
+            stats.onError();
+        }
     }
 
     /**

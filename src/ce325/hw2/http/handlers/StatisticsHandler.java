@@ -27,7 +27,7 @@ public class StatisticsHandler implements HttpHandler{
         DOM.getBody().addChild(new Hr());
         DOM.getBody().addChild(new P("Total connections: " + stats.getConnections()));
         DOM.getBody().addChild(new P("Total errors: " + stats.getTotalErrors()));
-        DOM.getBody().addChild(new P("Request mean time: " + stats.getMeanTime()));
+        DOM.getBody().addChild(new P(String.format("Request mean time: %d ms", stats.getMeanTime())));
         DOM.getBody().addChild(new Hr());
         Date date = new Date(stats.getStartedTime());
         DOM.getBody().addChild(new P(String.format("Server up since: %s (%.2f seconds)",
