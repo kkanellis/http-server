@@ -1,8 +1,5 @@
 package ce325.hw2.service;
 
-//import com.sun.javaws.exceptions.InvalidArgumentException;
-
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,16 +15,18 @@ public class StatisticsService {
         return ourInstance;
     }
 
-    private final static int MAX_MEAN_SLOTS = 3;
+    private final static int MAX_MEAN_SLOTS = 10;
 
     private long mStarted;
     private AtomicLong mConnections;
     private AtomicInteger mMeanTime;
     private AtomicIntegerArray mTimeArray;
+    private AtomicInteger mTotalErrors;
 
     private StatisticsService() {
         mConnections = new AtomicLong(0);
         mMeanTime = new AtomicInteger(0);
+        mTotalErrors = new AtomicInteger(0);
         mTimeArray = new AtomicIntegerArray(MAX_MEAN_SLOTS);
     }
 
@@ -36,7 +35,7 @@ public class StatisticsService {
     }
 
     public int getTimeDelta() {
-        return (int)(mStarted - System.currentTimeMillis());
+        return (int)(System.currentTimeMillis() - mStarted);
     }
 
     /**
@@ -109,4 +108,24 @@ public class StatisticsService {
         return mMeanTime.get();
     }
 
+    /**
+     * Get the time the service was started
+     * @return Time in milliseconds since epoch
+     */
+    public long getStartedTime() {
+        return this.mStarted;
+    }
+
+
+    /**
+     * Get total server errors
+     * @return number of errors
+     */
+    public int getTotalErrors() {
+        return mTotalErrors.get();
+    }
+
+    public void onError() {
+       mTotalErrors.incrementAndGet();
+    }
 }

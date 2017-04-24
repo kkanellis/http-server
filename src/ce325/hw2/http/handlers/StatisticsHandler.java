@@ -1,7 +1,41 @@
 package ce325.hw2.http.handlers;
 
+import ce325.hw2.html.*;
+import ce325.hw2.http.HttpStatusCodes;
+import ce325.hw2.service.StatisticsService;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * Created by georgetg on 25/3/2017.
  */
-public class StatisticsHandler {
+public class StatisticsHandler implements HttpHandler{
+    @Override
+    public void handle(HttpExchange httpExchange) throws IOException {
+        StatisticsService stats = StatisticsService.getInstance();
+
+        // Create the html document
+        Document DOM = new Document();
+        DOM.getHead().addChild(new Title("Server statistics"));
+
+        DOM.getBody().addChild(new H(3).addChild(new Text("Server statistics:")));
+        DOM.getBody().addChild(new Hr());
+        DOM.getBody().addChild(new P("Total connections: " + stats.getConnections()));
+        DOM.getBody().addChild(new P("Request mean time: " + stats.getMeanTime()));
+        DOM.getBody().addChild(new P("Total errors: " + stats.getTotalErrors()));
+
+        // write the response
+        String response = DOM.getHTML();
+        httpExchange.sendResponseHeaders(HttpStatusCodes.HTTP_OK, response.length());
+        OutputStream os = httpExchange.getResponseBody();
+        os.write(response.getBytes());
+        os.flush();
+        os.close();
+    }
+
+
 }
