@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by georgetg on 24/3/2017.
+ * HTML Document object
  */
 public class Document {
     private Tag mBody;

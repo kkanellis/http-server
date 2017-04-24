@@ -3,7 +3,7 @@ package ce325.hw2.html;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * Created by georgetg on 24/3/2017.
+ * HTML real text
  */
 public class Text implements Element{
     private String mText;

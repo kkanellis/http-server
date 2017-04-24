@@ -1,7 +1,7 @@
 package ce325.hw2.html;
 
 /**
- * Created by sfi on 22/4/2017.
+ * HTML <h?> tag
  */
 public class H extends Tag {
     public H(int size) {

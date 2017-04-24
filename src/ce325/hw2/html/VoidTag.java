@@ -3,7 +3,7 @@ package ce325.hw2.html;
 import java.util.Map;
 
 /**
- * Created by georgetg on 24/3/2017.
+ * HTML void (no child elements) tag
  */
 public class VoidTag extends Tag {
     /**

@@ -1,7 +1,7 @@
 package ce325.hw2.html;
 
 /**
- * Created by sfi on 23/4/2017.
+ * HTML <img> tag
  */
 public class Img extends Tag {
     public Img() {

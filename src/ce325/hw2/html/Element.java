@@ -1,14 +1,14 @@
 package ce325.hw2.html;
 
 /**
- * Created by georgetg on 24/3/2017.
+ * HTML element interface
  */
 public interface Element <T extends Element<T>> {
-    public boolean hasChildren();
-    public String getHTML();
-    public T addAttribute(String name, String value);
-    public T addChild(Element child);
-    public boolean removeChild(Element child);
-    public boolean removeAttribute(String name);
-    public Element childAt(int index);
+    boolean hasChildren();
+    String getHTML();
+    T addAttribute(String name, String value);
+    T addChild(Element child);
+    boolean removeChild(Element child);
+    boolean removeAttribute(String name);
+    Element childAt(int index);
 }

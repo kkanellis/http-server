@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by georgetg on 23/3/2017.
+ * HTML Tag (implements HTML Element)
  */
 public class Tag implements Element {
     protected String mTagName = "";
