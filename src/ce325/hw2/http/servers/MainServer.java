@@ -7,6 +7,8 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by georgetg on 24/3/2017.
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 public class MainServer {
     private Logger logger = Logger.getInstance();
     private HttpServer server;
+    private ExecutorService executor;
 
     public MainServer(String rootDir, int listenPort) {
         try {
@@ -22,8 +25,7 @@ public class MainServer {
                     new InetSocketAddress(listenPort),
                     0   // system default
             );
-        }
-        catch (IllegalArgumentException | IOException ex) {
+        } catch (IllegalArgumentException | IOException ex) {
             logger.error(ex.getMessage());
             // TODO: exit
         }
@@ -34,14 +36,14 @@ public class MainServer {
                     "/",
                     new FileHandler(rootDir)
             );
-        }
-        catch(IllegalArgumentException | NullPointerException ex) {
+        } catch(IllegalArgumentException | NullPointerException ex) {
             logger.error(String.format("Invalid root directory [%s]", rootDir));
             logger.error(ex.getMessage());
             System.exit(-1);
         }
-        // TODO: change that to add Queue support
-        server.setExecutor(null);
+
+        executor = Executors.newFixedThreadPool(2);
+        server.setExecutor(executor);
 
         logger.debug("Server initialized");
     }
@@ -50,6 +52,11 @@ public class MainServer {
         logger.debug("Starting server...");
         server.start();
         logger.info("Server started!");
+    }
+
+    public void stop() {
+        server.stop(0);
+        executor.shutdown();
     }
 
 }
