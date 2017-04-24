@@ -46,11 +46,17 @@ public class WebLoggingService {
             sb.append(stringifyHeaders(exchange.getRequestHeaders()) + lineSep);
             sb.append(trace + lineSep);
             sb.append(sep + lineSep);
+
+            // create file (if not exists) and write
+            if (Files.notExists(mErrorPath)) {
+                logger.debug(String.format("Creating error file '%s'", mErrorPath));
+                Files.createFile(mErrorPath);
+            }
             Files.write(mErrorPath, sb.toString().getBytes("UTF-8"), StandardOpenOption.APPEND);
         } catch (UnsupportedEncodingException ex) {
             logger.error("Unsupported encoding!");
         } catch (IOException ex) {
-            logger.error("Cannot write to access file!");
+            logger.error("Cannot write to error file!");
         }
     }
 
@@ -60,11 +66,17 @@ public class WebLoggingService {
         try {
             requestUri = URLDecoder.decode(exchange.getRequestURI().toString(), "UTF-8");
             String agent = exchange.getRequestHeaders().getFirst("user-agent");
-            // IP Address - Ημερομηνία Σύνδεσης - Request URL -> Response Code - User-Agent HTTP Request Header
+            // IP Address - Request date - Request URL -> Response Code - User-Agent HTTP Request Header
             String line = String.format("%s - %s - %s -> [%d] %s - %s%s",
                     IpAddress, new Date().toString(), requestUri,
                     code, HttpStatusCodes.describe(code), agent,
                     System.getProperty("line.separator"));
+
+            // create file (if not exists) and write
+            if (Files.notExists(mAccessPath)) {
+                logger.debug(String.format("Creating access file '%s'", mAccessPath));
+                Files.createFile(mAccessPath);
+            }
             Files.write(mAccessPath, line.getBytes("UTF-8"), StandardOpenOption.APPEND);
 
         } catch (UnsupportedEncodingException ex) {
