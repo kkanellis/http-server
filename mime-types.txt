@@ -407,7 +407,6 @@
 .m21=application/mp21
 .mp4a=audio/mp4
 .mp4=video/mp4
-.mp4=application/mp4
 .m3u8=application/vnd.apple.mpegurl
 .mus=application/vnd.musician
 .msty=application/vnd.muvee.style
@@ -498,15 +497,12 @@
 .pgn=application/x-chess-pgn
 .pgm=image/x-portable-graymap
 .png=image/png
-.png=image/x-citrix-png
-.png=image/x-png
 .ppm=image/x-portable-pixmap
 .pskcxml=application/pskc+xml
 .pml=application/vnd.ctc-posml
 .ai=application/postscript
 .pfa=application/x-font-type1
 .pbd=application/vnd.powerbuilder6
-.pgp=application/pgp-encrypted
 .pgp=application/pgp-signature
 .box=application/vnd.previewsystems.box
 .ptid=application/vnd.pvi.ptid1
@@ -541,7 +537,6 @@
 .rtx=text/richtext
 .link66=application/vnd.route66.link66+xml
 .rss=application/rss+xml
-.xml=application/xml
 .shf=application/shf+xml
 .st=application/vnd.sailingtracker.track
 .svg=image/svg+xml
