@@ -1,9 +1,5 @@
 package ce325.hw2;
 
-import ce325.hw2.html.Document;
-import ce325.hw2.html.P;
-import ce325.hw2.html.Text;
-import ce325.hw2.html.Title;
 import ce325.hw2.http.Icons;
 import ce325.hw2.http.MIMETypes;
 import ce325.hw2.http.servers.MainServer;
@@ -22,12 +18,7 @@ import java.nio.file.Path;
 public class Main {
 
     public static void main(String[] args) {
-        Document DOM = new Document();
-        DOM.getBody().addChild(new P().addChild(new Text("Hello World!")));
-
-        DOM.getHead().addChild(new Title("TEST!"));
-        System.out.println(DOM.getHTML());
-
+        // Initialize statistics server mechanism
         StatisticsService s = StatisticsService.getInstance();
         s.start();
 
@@ -52,6 +43,7 @@ public class Main {
         );
 
         // Set icons path
+        // NOTE that icons path is relative to the root directory
         Path iconsDir = config.getIconsDirPath();
         Path absoluteIconsDir = config.getDocumentRootPath().resolve(iconsDir);
         if (!Files.isDirectory(absoluteIconsDir)) {

@@ -1,11 +1,12 @@
 package ce325.hw2.service;
 
+import ce325.hw2.util.Logger;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created by georgetg on 25/3/2017.
  * Singleton class that does stats counting, using atomic variables
  */
 public class StatisticsService {
@@ -69,7 +70,6 @@ public class StatisticsService {
             }
         }
 
-
         // try to get a slot for mean request time calculation
         for (int i=0; i < mTimeArray.length(); i++) {
             if (mTimeArray.compareAndSet(i, 0, threadId)) {
@@ -77,9 +77,9 @@ public class StatisticsService {
                 return i;
             }
         }
+
         // All slots are full
-        // TODO: log this
-        System.err.println("All time slots are full :(");
+        Logger.getInstance().error("All time slots are full :(");
         return -1;
     }
 

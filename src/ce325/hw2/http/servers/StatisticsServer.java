@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 /**
- * Created by georgetg on 24/3/2017.
+ * Statistics server
  */
 public class StatisticsServer {
     private Logger logger = Logger.getInstance();
@@ -24,8 +24,9 @@ public class StatisticsServer {
 
             server.createContext("/", new StatisticsHandler());
         } catch (IllegalArgumentException | IOException ex) {
+            logger.error("Error while initializing statistics server...");
             logger.error(ex.getMessage());
-            // TODO: exit
+            System.exit(-1);
         }
     }
 

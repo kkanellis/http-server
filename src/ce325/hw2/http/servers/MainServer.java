@@ -5,14 +5,12 @@ import ce325.hw2.util.Logger;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by georgetg on 24/3/2017.
+ * Main server
  */
 public class MainServer {
     private Logger logger = Logger.getInstance();
@@ -27,8 +25,9 @@ public class MainServer {
                     0   // system default
             );
         } catch (IllegalArgumentException | IOException ex) {
+            logger.error("Error while initializing main server...");
             logger.error(ex.getMessage());
-            // TODO: exit
+            System.exit(-1);
         }
 
         try {
@@ -40,6 +39,7 @@ public class MainServer {
             System.exit(-1);
         }
 
+        // number of threads that handle requests
         executor = Executors.newFixedThreadPool(2);
         server.setExecutor(executor);
 
