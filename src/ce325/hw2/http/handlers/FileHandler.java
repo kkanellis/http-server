@@ -327,12 +327,6 @@ public class FileHandler implements HttpHandler {
             new ByteArrayInputStream(bytes),
             bytes.length
         );
-
-        // Log access and add error if needed
-        webLogger.access(exchange, responseCode);
-        if (responseCode >= 400) {
-            stats.onError();
-        }
     }
 
     /**
