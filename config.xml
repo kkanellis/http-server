@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ce325server>
-  <listen port="8081" />
-  <statistics port="8082" />
+  <listen port="8080" />
+  <statistics port="8081" />
   <log>
     <access filepath="access_log.txt" />
     <error filepath="error_log.txt" />
